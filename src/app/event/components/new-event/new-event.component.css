@@ -1,0 +1,30 @@
+.cover {
+  background-image: url("https://appharbor.com/assets/images/stackoverflow-logo.png");
+  background-repeat: no-repeat, repeat;
+  background-color: #c2bfe2;
+}
+
+
+#myModal {
+    position: relative;
+  }
+  .cover {
+      position: absolute;
+      top: 0;
+      left: 0;
+  }
+  .profil {
+    width: 150px;
+    height: 150px;
+    position: absolute;
+    top: 250px;
+    left: 25px;
+    background-image: url("https://appharbor.com/assets/images/stackoverflow-logo.png");
+  background-repeat: no-repeat, repeat;
+
+  background-color: #146ab9;
+
+  }
+  .profil {
+    z-index: 10;
+  }

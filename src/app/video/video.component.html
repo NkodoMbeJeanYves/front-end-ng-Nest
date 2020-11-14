@@ -1,0 +1,48 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <video id="video" autoplay controls>La video n'est pas disponible!</video>
+        </div>    
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <video id="vid2"></video>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container">
+   <div class="form-group col-md-6">
+        <form #myForm="ngForm" (ngSubmit)="upload(myForm)">
+            <div class="form-group">
+            <label for="exampleInputEmail1">Titre</label>
+            <input type="text" class="form-control" name="title" id="exampleInputEmail1" #ref_title [(ngModel)]="title" aria-describedby="emailHelp" placeholder="Entrer un titre" ngModel>
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            </div>
+            <div class="form-group">
+            <label for="username">Description</label>
+          <textarea class="form-control"
+           [(ngModel)]="description"
+            id="exampleTextarea"
+            rows="3"  
+            #ref_loc_description="ngModel"  
+            name="description" 
+            placeholder="description here" 
+            required 
+            minlength="10"
+            ngModel
+            >
+          </textarea>
+
+          <div class="row col-md-6">
+            <input type="button" class="btn btn-danger" id="btnStart" value="Start Recording">&nbsp;
+            <input type="button" class="btn btn-primary" id="btnStop" value="Stop">
+          </div>
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="myForm.invalid">Upload</button>
+        </form>
+   </div>
+</div>
+<!-- <app-video2></app-video2> -->

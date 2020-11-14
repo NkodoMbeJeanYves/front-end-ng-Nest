@@ -1,0 +1,22 @@
+<div id="container">
+    <video id="gum" playsinline autoplay muted controls></video>
+    <video id="recorded" playsinline loop></video>
+
+    <div>
+      <button (click)="startCamera()" id="start">Start camera</button>
+      <button (click)="startRecordProcess($event)" id="record" disabled>Record</button>
+      <button (click)="playProcess($event)" id="play" disabled>Play</button>
+      <button (click)="startDownloadProcess($event)" id="download" disabled >Download</button>
+    </div>
+
+    <div>
+      <h4>Media Stream Constraints options</h4>
+      <p>
+        Echo cancellation: <input type="checkbox" id="echoCancellation" />
+      </p>
+    </div>
+
+    <div>
+      <span id="errorMsg"></span>
+    </div>
+  </div>

@@ -1,0 +1,213 @@
+
+  
+
+
+
+
+
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+
+      <form class="bs-component"  #myForm="ngForm" (ngSubmit)="addNewEvent(myForm)">
+
+        <div class="modal-content">
+    
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Créer un évènement</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+    
+          <!-- Modal body -->
+          <div class="modal-body">
+              
+
+                <div style="margin-bottom: 400px;">
+                  <div class="form-group cover w-100" style="height: 300px;">
+                    <h1 class="display-4">My Cover Image</h1>
+                  </div>
+
+                  <div class="form-group profil img-responsive" style="height: 100px;">
+                  
+                  </div>
+                </div>
+                  
+
+                  
+                <!-- Event Name -->
+                  <div class="form-group">
+                    <label class="form-control-label" for="eventName">Event Name</label>
+                    <input type="text"
+                    name="event_name"
+                    #ref_event_name="ngModel"
+                    class="form-control" 
+                    placeholder="Event Name" 
+                    [(ngModel)]="this.event.name" ngModel>
+                  </div>
+
+                  
+        
+                  <div class="form-group ">
+                    <div class="form-group">
+                      <div class="custom-control custom-switch">
+                        <input  type="checkbox" id="customSwitch1" (change)="eventOnlineOrNot($event)" name="event_status" #ref_status="ngModel" [(ngModel)]="this.event.status" ngModel checked="" class="custom-control-input">
+                        <label  for="customSwitch1" class="custom-control-label">S’agit-il d’un événement en ligne ?
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- if non -->
+                  <div *ngIf="!this.event.status" class="form-group">
+                    <label class="form-control-label" for="eventName">Lieu</label>
+                    <input type="text" name="location" #ref_location="ngModel" [(ngModel)]="this.event.location" ngModel class="form-control" placeholder="rechercher un lieu">
+                  </div>
+
+
+                  <div *ngIf="!this.event.status" class="form-group">
+                    <label class="form-control-label" for="eventName">Informations sur le lieu</label>
+                    <input type="text" name="location_info" #ref_location_info="ngModel" [(ngModel)]="this.event.locationInfo" ngModel class="form-control" placeholder="informations sur le lieu">
+                  </div>
+                  <!-- if non-->
+
+                  <!--if oui-->
+                  <div *ngIf="this.event.status" class="form-group">
+                    <label class="form-control-label" for="eventName">Lien de diffusion</label>
+                    <input type="text" name="broadcast_link" #ref_broadcast_link="ngModel" [(ngModel)]="this.event.broadcastLink" ngModel class="form-control" placeholder="site web de la billetterie">
+                  </div>
+                  <!-- if oui -->
+
+                  <div class="form-group">
+                    <label class="form-control-label" for="eventName">Time Zone</label>
+                    <select  id="exampleSelect1" class="form-control" name="timezone" #ref_time_zone="ngModel" [(ngModel)]="this.event.timezone" ngModel>
+                      <option >1</option>
+                      <option >2</option>
+                    </select>
+                  </div>
+
+
+
+                  
+                  
+
+                  <div class="form-group">
+                    <div class="form-row">
+                      <div class="col-md-3 mb-3">
+                        <label for="validationCustom01">Date de début</label>
+                        <input type="date" class="form-control" id="validationCustom01" name="begin_date" #ref_begin_date="ngModel" [(ngModel)]="this.event.begin_date" ngModel required>
+                        
+                      </div>
+                      <div class="col-md-2 mb-3">
+                        <label for="validationCustom01">Heure de début</label>
+                        <input type="time" class="form-control" id="validationCustom01" name="begin_time" #ref_begin_time="ngModel" [(ngModel)]="this.event.begin_time" ngModel required>
+                        
+                      </div>
+                      <div class="col-md-2 mb-3">
+                        <label for="validationCustom02">&nbsp;</label>
+                      </div>
+                      <div class="col-md-3 mb-3">
+                        <label for="validationCustom01">Date de fin</label>
+                        <input type="date" class="form-control" id="validationCustom01" name="end_date" #ref_end_date="ngModel" [(ngModel)]="this.event.end_date" ngModel required>
+                        
+                      </div>
+                      <div class="col-md-2 mb-3">
+                        <label for="validationCustom01">Heure de fin</label>
+                        <input type="time" class="form-control" id="validationCustom01" name="end_time" #ref_end_time="ngModel" [(ngModel)]="this.event.end_time" ngModel required>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="form-group">
+                    <label class="form-control-label" for="description">Description</label>
+                    <textarea  id="exampleTextarea" rows="3" class="form-control" spellcheck="false" name="event_description" #ref_event_description="ngModel" [(ngModel)]="this.event.description" ngModel></textarea>
+                  </div>
+
+
+                  <div class="form-group">
+                    <label class="form-control-label" for="eventName">Intervenants</label>
+                    <select  id="exampleSelect1" class="form-control" name="event_status" #ref_event_speaker (change)="selectSpeaker(ref_event_speaker.value)">
+                      <option value="speaker-1">Person 1</option>
+                      <option value="speaker-2">Person 2</option>
+                    </select>
+                  </div>
+
+
+                  <div class="form-group">
+                    <label class="form-control-label" for="eventName">Site web de la billetterie</label>
+                    <input type="text" class="form-control" placeholder="site web de la billetterie"
+                    name="event_ticketing_web_site" #ref_event_ticketing_web_site="ngModel" [(ngModel)]="this.event.ticketingWebSite" ngModel>
+                  </div>
+
+                  
+                  <fieldset class="form-group">
+                    <legend>Visibilité de l'évènement</legend>
+                    <small id="fileHelp" class="form-text text-muted mb-4">
+                      La visibilité de l’événement ne peut plus être modifiée une fois l’événement créé. En savoir plus
+                    </small>
+                    
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="event_visibility"
+                        #ref_event_visibility="ngModel"
+                          [(ngModel)]="this.event.visibility"
+                          ngModel  id="optionsRadios1" value="public" checked>
+                        Événement public
+                      </label>
+                      <small id="fileHelp" class="form-text text-muted">
+                        Visible de tout le monde sur LinkedIn. N’importe qui peut décider de participer.
+                      </small>
+                    </div>
+                    <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="event_visibility"
+                        #ref_event_visibility="ngModel"
+                        [(ngModel)]="this.event.visibility"
+                        ngModel
+                        id="optionsRadios2" value="private">
+                        Événement privé
+                      </label>
+                      <small id="fileHelp" class="form-text text-muted">
+                        Visible des invités et de toute autre personne ayant le lien de l’événement. Les personnes qui ne sont pas invitées doivent obtenir votre approbation pour participer.
+                      </small>
+                    </div>
+                    
+                  </fieldset>
+
+
+                  <div class="form-group">
+                    <div class="input-group mb-3">
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile02">
+                        <label class="custom-file-label" for="inputGroupFile02">Cover File</label>
+                      </div>
+                      
+                    </div>
+
+                    <div class="input-group mb-3">
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile02">
+                        <label class="custom-file-label" for="inputGroupFile02">Profil File</label>
+                      </div>
+                    
+                    </div>
+                  </div>
+        
+          </div>
+    
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Cr&eacute;er</button>
+          </div>
+    
+        </div>
+
+
+
+
+     </form>
+
+
+
+    </div>
+  </div>
