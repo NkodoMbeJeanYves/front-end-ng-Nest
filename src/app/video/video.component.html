@@ -12,36 +12,46 @@
 </div>
 
 
-
 <div class="container">
    <div class="form-group col-md-6">
         <form #myForm="ngForm" (ngSubmit)="upload(myForm)">
             <div class="form-group">
             <label for="exampleInputEmail1">Titre</label>
-            <input type="text" class="form-control" name="title" id="exampleInputEmail1" #ref_title [(ngModel)]="title" aria-describedby="emailHelp" placeholder="Entrer un titre" ngModel>
-            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            <input type="text" class="form-control" name="title" id="exampleInputEmail1" #ref_title="ngModel" [(ngModel)]="title" aria-describedby="emailHelp" placeholder="Entrer un titre" ngModel>
+            <small id="emailHelp" class="form-text" *ngIf="filename">{{ this.filename }}</small>
+            <small id="emailHelp" class="form-text text-muted" *ngIf="!filename">The recorded file will be automatically uploaded after the record process.</small>
             </div>
             <div class="form-group">
-            <label for="username">Description</label>
-          <textarea class="form-control"
-           [(ngModel)]="description"
-            id="exampleTextarea"
-            rows="3"  
-            #ref_loc_description="ngModel"  
-            name="description" 
-            placeholder="description here" 
-            required 
-            minlength="10"
-            ngModel
-            >
-          </textarea>
+                <label for="username" ></label>
 
-          <div class="row col-md-6">
-            <input type="button" class="btn btn-danger" id="btnStart" value="Start Recording">&nbsp;
-            <input type="button" class="btn btn-primary" id="btnStop" value="Stop">
-          </div>
+                <label for="username">Description</label>
+            <textarea class="form-control"
+            [(ngModel)]="description"
+                id="exampleTextarea"
+                rows="3"  
+                #ref_loc_description="ngModel"  
+                name="description" 
+                placeholder="description here" 
+                required 
+                minlength="10"
+                ngModel
+                >
+            </textarea>
+
+            <div class="row col-md-12 mt-2">
+                <div class="col-md-5">
+                    <button type="button" [disabled]="myForm.invalid" class="btn btn-danger form-control" id="btnStart">
+                        Start Recording
+                    </button>
+                </div>
+                &nbsp;
+                <div class="col-md-6">
+                    <button type="button" [disabled]="myForm.invalid" class="btn btn-primary form-control" id="btnStop" >
+                        Stop record And Upload
+                    </button>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary" [disabled]="myForm.invalid">Upload</button>
+            </div>
         </form>
    </div>
 </div>

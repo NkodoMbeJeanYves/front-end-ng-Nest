@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { stringify } from '@angular/compiler/src/util';
 import { Component, OnInit } from '@angular/core';
 import { NgForm, FormControl, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import {WebcamImage, WebcamInitError, WebcamUtil} from 'ngx-webcam';
 import {Subject, Observable} from 'rxjs';
 import { BuilderService } from '../services/builder.service';
@@ -25,15 +26,21 @@ video = {
 
 title: string;
 description: string;
+chunks = [];
+
+isFormCompleted = false;
+
+filename = 'filename will be showed here';
   constructor(
     private http: HttpClient,
-    private builderSvc: BuilderService
+    private builderSvc: BuilderService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
     this.loadState();
-    this.title = 'mon titre';
-    this.description = 'ma description';
+    this.title = undefined;
+    this.description = undefined;
   }
 
   loadState(): void {
@@ -68,7 +75,7 @@ description: string;
         const stop = document.querySelector('#btnStop');
         const vidSave = document.querySelector('#vid2');
         const mediaRecorder = new MediaRecorder(mediaStreamObject);
-        let chunks = [];
+        // let chunks = [];
         start.addEventListener('click', (ev) => {
           mediaRecorder.start();
           console.log(mediaRecorder.state);
@@ -80,19 +87,52 @@ description: string;
         });
 
         mediaRecorder.ondataavailable = (ev)  =>  {
-          chunks.push(ev.data);
+          this.chunks.push(ev.data);
         }
 
-        mediaRecorder.onstop = (ev) =>  {
+        /* mediaRecorder.onstop = (ev) =>  {
           let blob = new Blob(chunks, { type: 'video/mp4;'});
           this.file = blob as any;
           chunks = [];
           let videoURL = window.URL.createObjectURL(blob);
           (vidSave as any).src = videoURL;
           console.log(blob);
+          const fd = new FormData();
+          fd.append('file', this.file);
+          this.http.post('http://localhost:3000/api/videos/upload', fd, { headers : this.builderSvc.options}).subscribe(
+            (data)  =>  {
+              console.log(data);
+            }
+          );
+        } */
+
+        mediaRecorder.onstop = (ev) =>  {
+          let blob = new Blob(this.chunks, { type: 'video/mp4;'});
+          this.file = blob as any;
+          // after recording we upload already 
+          if (this.title !== undefined && this.description !== undefined ) {
+            this.upload().subscribe(
+              (data)=>{
+                console.log(data);
+                console.log(data.file.filename);
+                this.filename = data.file.filename;
+                this.video.video_file_location = data.file.path;
+                this.saveVideoInformation();
+              },
+              (err)=>{
+                console.log(err);
+              }
+            );
+          } else {
+            this.toastr.info('le formulaire doit être completé avant la soumission!');
+          }
+          
+          this.chunks = [];
+          let videoURL = window.URL.createObjectURL(blob);
+          (vidSave as any).src = videoURL;
+          console.log(blob);
         }
       }
-
 
     ).catch(
       (err) =>  {
@@ -101,56 +141,47 @@ description: string;
     );
   }
 
+  upload(): Observable<any> {
+    const fd = new FormData();
+    fd.append('file', this.file);  // definition du champ name='photo' dont la valeur est le fichier à uploader
+    /* fd.append('title', 'this is my title');
+    fd.append('description', 'this is my description'); */
+    return this.http.post('http://localhost:3000/api/videos/upload', fd);
+  }
 
-  upload(f: NgForm) {
 
-    const formValues = f.value;
-    const title = formValues.title;
-    const description = formValues.description;
-    console.log(formValues);
+  saveVideoInformation(): void {
     let ControlFlag = false; // variable de controle des validation
-    this.video.video_title = title;
-    this.video.video_description = description;
-    this.video.video_file_location = 'No Yet Defined';
+    this.video.video_title = this.title;
+    this.video.video_description = this.description;
+    // this.video.video_file_location = 'No Yet Defined';
 
-    let control = new FormControl(title, [Validators.minLength(5), Validators.required]);
+    let control = new FormControl(this.title, [Validators.minLength(5), Validators.required]);
     if (control.errors) {
       ControlFlag = true;
     }
 
-    control = new FormControl(description, [Validators.minLength(5), Validators.required]);
+    control = new FormControl(this.description, [Validators.minLength(5), Validators.required]);
     if (control.errors) {
       ControlFlag = true;
     }
 
     if (ControlFlag === true) {
       // message d'erreur
+      this.toastr.error('Le formulaire doit totalement etre renseigné');
     } else {
-    const fd = new FormData();
-    fd.append('file', this.file);
-    this.http.post('http://localhost:3000/api/videos', this.video, { headers : this.builderSvc.options}).subscribe(
-      (data)  =>  {
-        console.log('success');
-        // upload file
-        this.http.post(`http://localhost:3000/api/videos/upload`, fd, { headers : this.builderSvc.options}).subscribe(
-      (data)  =>  {
-        console.log('file uploaded succefully');
-      }
-    );
-
-      },
-      (err) =>  {
-        console.log(err);
-      }
-    );
-    /* return this.http.post(`http://localhost:3000/videos/upload?video_title=${title}&video_description=${description}`, fd).subscribe(
-      (data)  =>  {
-        console.log('success');
-      }
-    ); */
+      const fd = new FormData();
+      fd.append('file', this.file);
+      this.http.post('http://localhost:3000/api/videos', this.video, { headers : this.builderSvc.options}).subscribe(
+        (data) => {
+          console.log(data);
+          this.toastr.success('informations saved!');
+        }
+      );
     }
+
   }
+  
 
 
-
-}
+  }
