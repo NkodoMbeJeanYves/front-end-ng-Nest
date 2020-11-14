@@ -2,9 +2,7 @@
     <div class="row">
         <div class="col-md-6">
             <video id="video" autoplay controls>La video n'est pas disponible!</video>
-        </div>    
-    </div>
-    <div class="row">
+        </div> 
         <div class="col-md-4">
             <video id="vid2"></video>
         </div>
@@ -14,10 +12,10 @@
 
 <div class="container">
    <div class="form-group col-md-6">
-        <form #myForm="ngForm" (ngSubmit)="upload(myForm)">
+        <form #myForm="ngForm" (ngSubmit)="fakeUpload($event)">
             <div class="form-group">
             <label for="exampleInputEmail1">Titre</label>
-            <input type="text" class="form-control" name="title" id="exampleInputEmail1" #ref_title="ngModel" [(ngModel)]="title" aria-describedby="emailHelp" placeholder="Entrer un titre" ngModel>
+            <input type="text" class="form-control" name="title" id="exampleInputEmail1" #ref_title="ngModel" required [(ngModel)]="title" aria-describedby="emailHelp" placeholder="Entrer un titre, plus de 5 caracteres" ngModel>
             <small id="emailHelp" class="form-text" *ngIf="filename">{{ this.filename }}</small>
             <small id="emailHelp" class="form-text text-muted" *ngIf="!filename">The recorded file will be automatically uploaded after the record process.</small>
             </div>
@@ -31,22 +29,22 @@
                 rows="3"  
                 #ref_loc_description="ngModel"  
                 name="description" 
-                placeholder="description here" 
+                placeholder="description here, at least 10 characters" 
                 required 
                 minlength="10"
                 ngModel
                 >
             </textarea>
 
-            <div class="row col-md-12 mt-2">
-                <div class="col-md-5">
-                    <button type="button" [disabled]="myForm.invalid" class="btn btn-danger form-control" id="btnStart">
-                        Start Recording
+            <div class="row mt-2">
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-danger form-control" [disabled]="myForm.invalid" id="btnStart">
+                        Record
                     </button>
                 </div>
                 &nbsp;
-                <div class="col-md-6">
-                    <button type="button" [disabled]="myForm.invalid" class="btn btn-primary form-control" id="btnStop" >
+                <div class="col-md-7">
+                    <button type="button" class="btn btn-primary form-control" [disabled]="myForm.invalid" id="btnStop" >
                         Stop record And Upload
                     </button>
                 </div>

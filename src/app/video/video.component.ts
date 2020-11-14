@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { stringify } from '@angular/compiler/src/util';
 import { Component, OnInit } from '@angular/core';
 import { NgForm, FormControl, Validators } from '@angular/forms';
@@ -29,6 +29,10 @@ description: string;
 chunks = [];
 
 isFormCompleted = false;
+
+// upload component
+progress: number ;
+inProgress = false;
 
 filename = 'filename will be showed here';
   constructor(
@@ -110,23 +114,23 @@ filename = 'filename will be showed here';
           let blob = new Blob(this.chunks, { type: 'video/mp4;'});
           this.file = blob as any;
           // after recording we upload already 
+          console.log(this.title, this.description);
           if (this.title !== undefined && this.description !== undefined ) {
             this.upload().subscribe(
-              (data)=>{
-                console.log(data);
+              (Data) => {
+                const data = Data as any;
                 console.log(data.file.filename);
                 this.filename = data.file.filename;
                 this.video.video_file_location = data.file.path;
                 this.saveVideoInformation();
               },
-              (err)=>{
+              (err) =>  {
                 console.log(err);
               }
             );
           } else {
             this.toastr.info('le formulaire doit être completé avant la soumission!');
           }
-          
           this.chunks = [];
           let videoURL = window.URL.createObjectURL(blob);
           (vidSave as any).src = videoURL;
@@ -141,12 +145,15 @@ filename = 'filename will be showed here';
     );
   }
 
-  upload(): Observable<any> {
+  upload() {
     const fd = new FormData();
     fd.append('file', this.file);  // definition du champ name='photo' dont la valeur est le fichier à uploader
-    /* fd.append('title', 'this is my title');
-    fd.append('description', 'this is my description'); */
     return this.http.post('http://localhost:3000/api/videos/upload', fd);
+  }
+
+
+  fakeUpload(ev): void {
+    console.log('No needed!');
   }
 
 
@@ -154,7 +161,7 @@ filename = 'filename will be showed here';
     let ControlFlag = false; // variable de controle des validation
     this.video.video_title = this.title;
     this.video.video_description = this.description;
-    // this.video.video_file_location = 'No Yet Defined';
+    this.video.video_file_location = 'No Yet Defined';
 
     let control = new FormControl(this.title, [Validators.minLength(5), Validators.required]);
     if (control.errors) {

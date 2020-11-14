@@ -10,6 +10,7 @@ import { SampleComponent } from './sample/sample.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedDataService } from './services/shared-data.service';
 import { BuilderService } from './services/builder.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { VideoComponent } from './video/video.component';
@@ -42,6 +43,7 @@ const toastrConfig = {
   imports: [
     BrowserModule,
     AppRoutingModule,
+    BrowserAnimationsModule,
     WebcamModule,
     FormsModule,
     HttpClientModule,
