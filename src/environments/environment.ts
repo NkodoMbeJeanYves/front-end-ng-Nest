@@ -5,8 +5,8 @@
 
 export const environment = {
   production: false,
-  API: 'http://127.0.0.1:8888',
-  BASE_URL: '/3bi'
+  API: 'http://localhost:3000',
+  BASE_URL: '/nest-api'
 }
 
 export const _Url = ''; // 'http://backend.unibetaedu.com';

@@ -17,6 +17,7 @@ import { VideoComponent } from './video/video.component';
 import { WebcamModule } from 'ngx-webcam';
 import { Video2Component } from './video2/video2.component';
 import { Video1Component } from './video1/video1.component';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 const toastrConfig = {
   timeOut: 3000,
@@ -44,6 +45,7 @@ const toastrConfig = {
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    NgxPaginationModule,
     WebcamModule,
     FormsModule,
     HttpClientModule,

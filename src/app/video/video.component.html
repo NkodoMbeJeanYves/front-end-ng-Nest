@@ -54,3 +54,31 @@
    </div>
 </div>
 <!-- <app-video2></app-video2> -->
+
+<div style="text-align:center" class="container">
+    <h4>
+      Basic Pagination
+    </h4>
+  
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Title</th>
+          <th scope="col">Description</th>
+          <th scope="col">Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of videosList | paginate: config">
+          <th scope="row">{{ item.video_id }}</th>
+          <td>{{ item.video_title }}</td>
+          <td>{{ item.video_description }}</td>
+          <td><a class="btn btn-outline-primary" href="{{ item.video_file_location }}">download</a></td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+  
+</div>

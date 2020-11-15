@@ -6,6 +6,9 @@ import { ToastrService } from 'ngx-toastr';
 import {WebcamImage, WebcamInitError, WebcamUtil} from 'ngx-webcam';
 import {Subject, Observable} from 'rxjs';
 import { BuilderService } from '../services/builder.service';
+import { Video } from '../models/video';
+import { environment } from '../../environments/environment';
+
 
 declare var MediaRecorder: any;
 @Component({
@@ -23,6 +26,12 @@ video = {
   video_file_location : ''
 
 };
+// api link for fetch video or download
+downloadLink = null;
+
+
+videoModel: Video;
+videosList: Video[] = [];
 
 title: string;
 description: string;
@@ -30,21 +39,35 @@ chunks = [];
 
 isFormCompleted = false;
 
-// upload component
-progress: number ;
-inProgress = false;
+config: any;
+collection = { count: 60, data: [] };
 
 filename = 'filename will be showed here';
   constructor(
     private http: HttpClient,
     private builderSvc: BuilderService,
     private toastr: ToastrService
-  ) { }
+  ) {
+    this.config = {
+      itemsPerPage: 5,
+      currentPage: 1,
+      totalItems: 10
+    };
+  }
 
   ngOnInit(): void {
+    // fetch all videos
+    this.fetchVideos();
+
+    // launch camera
     this.loadState();
     this.title = undefined;
     this.description = undefined;
+    this.downloadLink = `${environment.API}${environment.BASE_URL}`;
+  }
+
+  pageChanged(event){
+    this.config.currentPage = event;
   }
 
   loadState(): void {
@@ -72,6 +95,7 @@ filename = 'filename will be showed here';
 
         (video as any).onloadedmetadata = (e) => {
           (video as any).play();
+          (video as any).stop();
         };
 
         // enregistrer ou arreter la video
@@ -94,22 +118,6 @@ filename = 'filename will be showed here';
           this.chunks.push(ev.data);
         }
 
-        /* mediaRecorder.onstop = (ev) =>  {
-          let blob = new Blob(chunks, { type: 'video/mp4;'});
-          this.file = blob as any;
-          chunks = [];
-          let videoURL = window.URL.createObjectURL(blob);
-          (vidSave as any).src = videoURL;
-          console.log(blob);
-          const fd = new FormData();
-          fd.append('file', this.file);
-          this.http.post('http://localhost:3000/api/videos/upload', fd, { headers : this.builderSvc.options}).subscribe(
-            (data)  =>  {
-              console.log(data);
-            }
-          );
-        } */
-
         mediaRecorder.onstop = (ev) =>  {
           let blob = new Blob(this.chunks, { type: 'video/mp4;'});
           this.file = blob as any;
@@ -122,6 +130,8 @@ filename = 'filename will be showed here';
                 console.log(data.file.filename);
                 this.filename = data.file.filename;
                 this.video.video_file_location = data.file.path;
+                this.video.video_title = this.title;
+                this.video.video_description = this.description;
                 this.saveVideoInformation();
               },
               (err) =>  {
@@ -148,7 +158,8 @@ filename = 'filename will be showed here';
   upload() {
     const fd = new FormData();
     fd.append('file', this.file);  // definition du champ name='photo' dont la valeur est le fichier à uploader
-    return this.http.post('http://localhost:3000/api/videos/upload', fd);
+    return this.http.post(`${environment.API}${environment.BASE_URL}/videos/upload`, fd);
+    
   }
 
 
@@ -158,8 +169,8 @@ filename = 'filename will be showed here';
 
 
   saveVideoInformation(): void {
-    let ControlFlag = false; // variable de controle des validation
-    this.video.video_title = this.title;
+    let ControlFlag = true; // variable de controle des validation
+    /* this.video.video_title = this.title;
     this.video.video_description = this.description;
     this.video.video_file_location = 'No Yet Defined';
 
@@ -171,7 +182,7 @@ filename = 'filename will be showed here';
     control = new FormControl(this.description, [Validators.minLength(5), Validators.required]);
     if (control.errors) {
       ControlFlag = true;
-    }
+    } */
 
     if (ControlFlag === true) {
       // message d'erreur
@@ -179,14 +190,41 @@ filename = 'filename will be showed here';
     } else {
       const fd = new FormData();
       fd.append('file', this.file);
-      this.http.post('http://localhost:3000/api/videos', this.video, { headers : this.builderSvc.options}).subscribe(
+      this.http.post(`${environment.API}${environment.BASE_URL}/videos`, this.video, { headers : this.builderSvc.options}).subscribe(
         (data) => {
-          console.log(data);
           this.toastr.success('informations saved!');
+          this.fetchVideos();
         }
       );
     }
 
+  }
+
+
+  fetchVideos(): void {
+    this.videosList = [];
+    this.http.get<any>(`${environment.API}${environment.BASE_URL}/videos`).subscribe(
+      (res) =>  {
+        if (res.statusCode === 200) {
+          this.toastr.info('download of videos completed!');
+          const videos: Video[] = res.data;
+
+          (this.videosList as any) = videos.map(
+            (video) =>  {
+              video.video_file_location = `${this.downloadLink}/${video.video_file_location}`;
+              return video;
+            }
+          );
+
+          console.log(this.videosList);
+        } else {
+          this.toastr.error(res.error, 'Error');
+        }
+      },
+      (err) =>  {
+        console.log(err);
+      }
+    );
   }
   
 
